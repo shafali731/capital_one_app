@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}
+Welcome Page
+{% endblock %}
+{% block header %}
+<!-- <script type="text/javascript" src="{{ url_for('static', filename='script.js')}}"></script> -->
+<form class="navbar-form navbar-left" action="/search" methods="GET">
+  <!-- <select class="custom-select" name="type" style="height:32px;" required>
+    <option value="Books">Books</option>
+    <option value="Movies">Movies</option>
+  </select> -->
+  <div class="input-group mb-3">
+    <input type="text" name="term" class="form-control" placeholder="cusines:spanish, indian, chinese...">
+    <div class="input-group-btn">
+      <div>
+    <input type="text" name="place" class="form-control" placeholder="Location">
+    <div class="input-group-btn">
+      <button class="btn btn-default" type="submit" method= "GET">
+        <i class="glyphicon glyphicon-search"></i>
+      </button>
+    </div>
+  </div>
+  <!-- </div> -->
+</form>
+
+<!-- <ul class="nav navbar-nav navbar-right">
+  {% if loggedIn %}
+  <li><a style="color:white;" href="/profile"><span class="glyphicon glyphicon-user"></span> Logged in as {{user}}</a></li>
+  <li><a style="color:white;" href="/logout"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>
+  {% else %}
+  <li><a style="color:white;" href="/signup"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+  <li><a style="color:white;" href="/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+  {% endif %}
+</ul> -->
+{% endblock %}
+
+{% block content %}
+
+
+{% endblock %}
+  </div>
+</div>

@@ -1,125 +1,141 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Geolocation</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
-{% block title %}
-Homepage
-{% endblock %}
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 80%;
+        width : 50%;
+        position:left;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      /* .navbar-brand{
+        background-color:red;
+        color: white;
+      } */
+      /* nav{
+        background-color:red;
+      } */
+    </style>
 
-{% block header %}
-<script type="text/javascript" src="{{ url_for('static', filename='script.js')}}"></script>
-<form class="navbar-form navbar-left" action="/search" methods="GET">
-  <!-- <select class="custom-select" name="type" style="height:32px;" required>
-    <option value="Books">Books</option>
-    <option value="Movies">Movies</option>
-  </select> -->
-  <div class="input-group mb-3">
-    <input type="text" name="h" class="form-control" placeholder="h">
-    <div class="input-group-btn">
-      <div>
-    <input type="text" name="query" class="form-control" placeholder="Search">
-    <div class="input-group-btn">
-      <button class="btn btn-default" type="submit">
-        <i class="glyphicon glyphicon-search"></i>
-      </button>
+  </head>
+  <body>
+    <!-- <nav class="navbar navbar-light">
+      <div class="container-fluid">
+          <div class="navbar-header">
+            <a class="navbar-brand" href="/"><span class="glyphicon glyphicon-home"></span> Yelp 2.0</a>
+          </div>
+    <form class="navbar-form navbar-left" action="/search" methods="GET"> -->
+      <!-- <select class="custom-select" name="type" style="height:32px;" required>
+        <option value="Books">Books</option>
+        <option value="Movies">Movies</option>
+      </select> -->
+      <!-- <div class="input-group mb-3">
+        <input type="text" name="term" class="form-control" placeholder="cusines:spanish, indian, chinese...">
+        <div class="input-group-btn">
+          <div>
+        <input type="text" name="place" class="form-control" placeholder="Location">
+        <div class="input-group-btn">
+          <button class="btn btn-default" type="submit" method= "GET">
+            <i class="glyphicon glyphicon-search"></i>
+          </button>
+        </div> -->
+      <!-- </div> -->
+      <!-- </div> -->
+    <!-- </form>
+    <div >
     </div>
-  </div>
-  <!-- </div> -->
-</form>
+    <div class="container-fluid"> -->
 
-<!-- <ul class="nav navbar-nav navbar-right">
-  {% if loggedIn %}
-  <li><a style="color:white;" href="/profile"><span class="glyphicon glyphicon-user"></span> Logged in as {{user}}</a></li>
-  <li><a style="color:white;" href="/logout"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>
-  {% else %}
-  <li><a style="color:white;" href="/signup"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-  <li><a style="color:white;" href="/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-  {% endif %}
-</ul> -->
-{% endblock %}
+    <div id="map"></div>
+    <script>
+      // Note: This example requires that you consent to location sharing when
+      // prompted by your browser. If you see the error "The Geolocation service
+      // failed.", it means you probably did not give permission for the browser to
+      // locate you.
+      var map, infoWindow;
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: -34.397, lng: 150.644},
+          zoom: 6
+        });
+        infoWindow = new google.maps.InfoWindow;
 
-{% block content %}
-  <!-- <button type="button" name="button" onclick="getLocation()"></button> -->
-  {{ret}}
-  <p id="mapholder"></p>
-  <p id="me"></p>
-  <p id="hello"></p>
-  <script>
-    var global = this;
-    var my_loc="";
+        // Try HTML5 geolocation.
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+            var pos = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
 
-    var x = document.getElementById("me");
-    var o = "";
-    var ur = "";
-  function getLocation() {
-      if (navigator.geolocation) {
-        navigator.geolocation.watchPosition(showPosition2);
-      } else {
-        x.innerHTML = "Geolocation is not supported by this browser.";
+            infoWindow.setPosition(pos);
+            // infoWindow.setContent('Location found.');
+            // infoWindow.open(map);
+            map.setCenter(pos);
+            // var list_of_items = ['a','b','c','d']
+            // var result = list_of_items.map(function(e,i) {
+            //   return {name: e}
+            // })
+            var locations = [];
+            var lats = {{lats}};
+            var longs = {{longs}}
+            var i;
+            for(i =0; i< {{amount}}; i++){
+              var dict = {};
+              dict["lat"] = lats[i];
+              dict["lng"] = longs[i];
+              locations.push(dict);
+            }
+
+            console.log(locations)
+            // var locations = loc
+            var markers = locations.map(function(location, i) {
+              return new google.maps.Marker({
+                position: location,
+                map:map,
+                // icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|ddd'
+                // label: labels[i % labels.length]
+              });
+            });
+            var pinImage = new google.maps.MarkerImage("http://www.googlemapsmarkers.com/v1/009900/");
+            var marker = new google.maps.Marker({
+            position: pos,
+            icon: pinImage,
+            map: map
+        });
+            // var marker = new google.maps.Marker({position: pos, map: map})
+          }, function() {
+            handleLocationError(true, infoWindow, map.getCenter());
+          });
+        } else {
+          // Browser doesn't support Geolocation
+          handleLocationError(false, infoWindow, map.getCenter());
+        }
       }
-      document.getElementById("hello").innerHTML = {{amount}}
-    };
-    // function showPosition(latitudes,longitudes,num) {
 
-    function showPosition(latitudes,longitudes,num) {
-      var a;
-      var ret= "";
-      // var lat= position.coords.latitude;
-      // var long = position.coords.longitude;
-      // var latlon_me= lat + "," + long;
-      // latlon+"&zoom=14&size=400x300&markers=color:red%7Clabel:%7C"+lat+","+long+
-      for (a = 1; a < parseInt(num); a++) {
-        ret += "&markers=color:red%7Clabel:%7C" + latitudes[a] + "," + longitudes[a];
+      function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+        infoWindow.setPosition(pos);
+        infoWindow.setContent(browserHasGeolocation ?
+                              'Error: The Geolocation service failed.' :
+                              'Error: Your browser doesn\'t support geolocation.');
+        infoWindow.open(map);
       }
-      var latlon = latitudes[0] + "," + longitudes[0];
-      if (parseInt(num) >1){
-        var lat2lon2 = latitudes[1] + "," + longitudes[1];
-      }
-      // o = lat;
-      // i = long;
-      var img_url = "https://maps.googleapis.com/maps/api/staticmap?center="+lat2lon2+"&zoom=12&size=400x300&markers=color:red%7Clabel:%7C"+latlon+ret+"&markers=color:green%7Clabel:%7C"+my_loc+"&key=AIzaSyBeUnLveEXl8MY27GnXVACU-gnhaGIMIQ8";
-      // document.getElementById("me").innerHTML = "a" + my_loc + "a";
-      // document.getElementById("me").innerHTML = "a" + my_loc + "a";
-      window.ur = "&markers=color:red%7Clabel:%7C"+latlon+ret+"&markers=color:green%7Clabel:%7C"+my_loc+"&key=AIzaSyBeUnLveEXl8MY27GnXVACU-gnhaGIMIQ8"
-
-      // document.getElementById("mapholder").innerHTML = "<img src='"+img_url+"'>";
-      getLocation();
-
-    };
-    function showPosition2(position) {
-      var lat= position.coords.latitude;
-      var long = position.coords.longitude;
-      var latlon_me= lat + "," + long;
-      // document.getElementById("me").innerHTML = lat + ","+long;
-
-      // return (position.coords.latitude + "," + position.coords.longitude);
-      // return lat;
-      // return (lat+","+long);
-      // var t = o + "," + i;
-      my_loc = latlon_me;
-      // console.log(my_loc);w
-      // var img_url = "https://maps.googleapis.com/maps/api/staticmap?center="+latlon_me+"&zoom=12&size=400x300&sensor=false&markers=color:green%7Clabel:C%7C"+latlon_me+"&markers=color:green%7Clabel:%7C&key=AIzaSyBeUnLveEXl8MY27GnXVACU-gnhaGIMIQ8";
-      var img_url = "https://maps.googleapis.com/maps/api/staticmap?center="+latlon_me+"&zoom=11&size=400x300&sensor=false&markers=color:green%7Clabel:%7C"+latlon_me+ window.ur;
-      // return my_loc;
-      // document.getElementById("me").innerHTML = latlon;
-      document.getElementById("me").innerHTML = "<img src='"+img_url+"'>";
-    };
-
-  </script>
-  <script type="text/javascript">
-
-    showPosition({{lats}},{{longs}},{{amount}});
-    <!-- getLocation(); -->
-
-  </script>
-  <!-- <script type="text/javascript"> showPosition('{{a}}','{{b}}') </script> -->
-
-  </script>
-
-  </script>
-  {{a}}
-  {{b}}
-  {{amount}}
-
-
-    {% endblock %}
-  </div>
-</div>
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBeUnLveEXl8MY27GnXVACU-gnhaGIMIQ8&callback=initMap">
+    </script>
+    <!-- </div> -->
+  </body>
+</html>
