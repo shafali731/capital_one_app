@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}
+Homepage
+{% endblock %}
+
+{% block header %}
+<script type="text/javascript" src="{{ url_for('static', filename='script.js')}}"></script>
+<form class="navbar-form navbar-left" action="/search" methods="GET">
+  <!-- <select class="custom-select" name="type" style="height:32px;" required>
+    <option value="Books">Books</option>
+    <option value="Movies">Movies</option>
+  </select> -->
+  <div class="input-group mb-3">
+    <input type="text" name="h" class="form-control" placeholder="h">
+    <div class="input-group-btn">
+      <div>
+    <input type="text" name="query" class="form-control" placeholder="Search">
+    <div class="input-group-btn">
+      <button class="btn btn-default" type="submit">
+        <i class="glyphicon glyphicon-search"></i>
+      </button>
+    </div>
+  </div>
+  <!-- </div> -->
+</form>
+
+<!-- <ul class="nav navbar-nav navbar-right">
+  {% if loggedIn %}
+  <li><a style="color:white;" href="/profile"><span class="glyphicon glyphicon-user"></span> Logged in as {{user}}</a></li>
+  <li><a style="color:white;" href="/logout"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>
+  {% else %}
+  <li><a style="color:white;" href="/signup"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+  <li><a style="color:white;" href="/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+  {% endif %}
+</ul> -->
+{% endblock %}
+
+{% block content %}
+  <!-- <button type="button" name="button" onclick="getLocation()"></button> -->
+  {{ret}}
+  <p id="mapholder"></p>
+  <p id="me"></p>
+  <p id="hello"></p>
+  <script>
+    var global = this;
+    var my_loc="";
+
+    var x = document.getElementById("me");
+    var o = "";
+    var ur = "";
+  function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.watchPosition(showPosition2);
+      } else {
+        x.innerHTML = "Geolocation is not supported by this browser.";
+      }
+      document.getElementById("hello").innerHTML = {{amount}}
+    };
+    // function showPosition(latitudes,longitudes,num) {
+
+    function showPosition(latitudes,longitudes,num) {
+      var a;
+      var ret= "";
+      // var lat= position.coords.latitude;
+      // var long = position.coords.longitude;
+      // var latlon_me= lat + "," + long;
+      // latlon+"&zoom=14&size=400x300&markers=color:red%7Clabel:%7C"+lat+","+long+
+      for (a = 1; a < parseInt(num); a++) {
+        ret += "&markers=color:red%7Clabel:%7C" + latitudes[a] + "," + longitudes[a];
+      }
+      var latlon = latitudes[0] + "," + longitudes[0];
+      if (parseInt(num) >1){
+        var lat2lon2 = latitudes[1] + "," + longitudes[1];
+      }
+      // o = lat;
+      // i = long;
+      var img_url = "https://maps.googleapis.com/maps/api/staticmap?center="+lat2lon2+"&zoom=12&size=400x300&markers=color:red%7Clabel:%7C"+latlon+ret+"&markers=color:green%7Clabel:%7C"+my_loc+"&key=AIzaSyBeUnLveEXl8MY27GnXVACU-gnhaGIMIQ8";
+      // document.getElementById("me").innerHTML = "a" + my_loc + "a";
+      // document.getElementById("me").innerHTML = "a" + my_loc + "a";
+      window.ur = "&markers=color:red%7Clabel:%7C"+latlon+ret+"&markers=color:green%7Clabel:%7C"+my_loc+"&key=AIzaSyBeUnLveEXl8MY27GnXVACU-gnhaGIMIQ8"
+
+      // document.getElementById("mapholder").innerHTML = "<img src='"+img_url+"'>";
+      getLocation();
+
+    };
+    function showPosition2(position) {
+      var lat= position.coords.latitude;
+      var long = position.coords.longitude;
+      var latlon_me= lat + "," + long;
+      // document.getElementById("me").innerHTML = lat + ","+long;
+
+      // return (position.coords.latitude + "," + position.coords.longitude);
+      // return lat;
+      // return (lat+","+long);
+      // var t = o + "," + i;
+      my_loc = latlon_me;
+      // console.log(my_loc);w
+      // var img_url = "https://maps.googleapis.com/maps/api/staticmap?center="+latlon_me+"&zoom=12&size=400x300&sensor=false&markers=color:green%7Clabel:C%7C"+latlon_me+"&markers=color:green%7Clabel:%7C&key=AIzaSyBeUnLveEXl8MY27GnXVACU-gnhaGIMIQ8";
+      var img_url = "https://maps.googleapis.com/maps/api/staticmap?center="+latlon_me+"&zoom=11&size=400x300&sensor=false&markers=color:green%7Clabel:%7C"+latlon_me+ window.ur;
+      // return my_loc;
+      // document.getElementById("me").innerHTML = latlon;
+      document.getElementById("me").innerHTML = "<img src='"+img_url+"'>";
+    };
+
+  </script>
+  <script type="text/javascript">
+
+    showPosition({{lats}},{{longs}},{{amount}});
+    <!-- getLocation(); -->
+
+  </script>
+  <!-- <script type="text/javascript"> showPosition('{{a}}','{{b}}') </script> -->
+
+  </script>
+
+  </script>
+  {{a}}
+  {{b}}
+  {{amount}}
+
+
+    {% endblock %}
+  </div>
+</div>
