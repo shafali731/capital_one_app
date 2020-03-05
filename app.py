@@ -16,7 +16,7 @@ app=Flask(__name__)
 
 @app.route('/')
 def start():
-    return render_template('welcome.html')
+    return render_template('new_welcome.html')
 @app.route('/result/<term>/<place>')
 def welcome(term,place):
     ret = sample.query_api(term,place)
@@ -25,14 +25,38 @@ def welcome(term,place):
     amount = t[-1]
     lats = ["" for p in range(int(amount))]
     longs = ["" for p in range(int(amount))]
+    resturs_urls = ["" for x in range(int(amount))]
+    resturs_names = ["" for x in range(int(amount))]
     # locations = []
     # print(locations)
     for k in range(int(amount)):
         lats[k]= y[str(k)]["coordinates"]["latitude"]
         longs[k] = y[str(k)]["coordinates"]["longitude"]
+        # resturs[k]= y[str(k)]['name']
         # print(locations[k])
+    # print(t[0])
+    amount_double = (int(amount))
+    u =0
+    while(u <amount_double):
+        resturs_urls[u]= y[str(u)]['url']
+        u+=1
+    # print("u:  ")
+    # print(u)
+    # print(amount_double*2)
+    for k in range(int(amount)):
+        resturs_names[k]= y[str(k)]['name']
+    # while(u<(amount_double*2)):
+    #     resturs[u]= y[str(u)]['name']
+    #     u+=1
+        # resturs[u+1]=y[str(u)]
+        # u+=2
     # print(locations)
-    return render_template('index.html', lats=lats, longs= longs, amount = int(amount))
+    # print(lats)
+    # print(y)
+    # print(y["1"]['name'])
+    # print(resturs)
+    # print(amount)
+    return render_template('index.html', resturs_urls=resturs_urls, resturs_names=resturs_names,ret =y, lats=lats, longs= longs, amount = int(amount))
 @app.route('/res/<term>/<place>')
 def search_result(term,place):
     ret = sample.query_api(term, place)
